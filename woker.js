@@ -3,7 +3,7 @@
 'use strict';
 const ACCOUNT = { //账号相关，安全性更高
 
-  "user" : "admin ", //博客后台用户名
+  "user" : "admin", //博客后台用户名
   "password" : "admin17", //博客后台密码
   "third_token" : "cfblog", //开放token，当前仅允许访问/admin/search.xml，/admin/sitemap.xml时可用，在cfblog_token的头信息中传递
   "cacheZoneId":"1ae06feafca1dbd9e406058de1c1c32f",//区域 ID
