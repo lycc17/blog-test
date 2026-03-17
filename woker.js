@@ -188,7 +188,12 @@ async function handlerRequest(event){
   let paths=url.pathname.split("/").filter(Boolean)
 
   //校验权限
-  if(("admin"==paths[0]||true===OPT.privateBlog) &&!parseBasicAuth(request)){
+  // - /admin 默认使用 Basic Auth
+  // - /admin/api/* 允许使用发布 Token（用于自动化发布）绕过 Basic Auth
+  const isAdminApi = (paths[0] === "admin" && paths[1] === "api");
+  const okPublishToken = isAdminApi && verifyPublishToken(request);
+
+  if(("admin"==paths[0]||true===OPT.privateBlog) && !okPublishToken && !parseBasicAuth(request)){
     return new Response("Unauthorized",{
       headers:{
         "WWW-Authenticate":'Basic realm="cfblog"',
@@ -569,10 +574,15 @@ async function handle_article(id){
 //后台请求处理
 async function handle_admin(request){
   let url = new URL(request.url),
-      paths = url.pathname.trim("/").split("/"),
+      paths = url.pathname.split("/").filter(Boolean),
       html,//返回html
       json,//返回json
       file;//返回文件
+
+  // 自动化发布 API：/admin/api/publish
+  if (paths[1] === "api") {
+    return await handle_admin_api(request, paths);
+  }
   //新建页
   if(1==paths.length||"list"==paths[1]){
     //读取主题的admin/index.html源码
@@ -979,6 +989,159 @@ async function handle_admin(request){
 
 /**------【④.抽丝剥茧，抽取公用的业务方法】-----**/
 
+// =============================
+// 自动化发布 API（方案2）
+// 路径：POST /admin/api/publish
+// 鉴权：Header x-cfblog-publish-token 必须等于 Workers Secret：PUBLISH_TOKEN
+// =============================
+
+function verifyPublishToken(request){
+  try{
+    const token = request.headers.get("x-cfblog-publish-token") || "";
+    if(!token) return false;
+    // PUBLISH_TOKEN 建议在 Workers Secrets 里配置，而不是写入代码
+    return (typeof PUBLISH_TOKEN !== "undefined") && token === PUBLISH_TOKEN;
+  }catch(e){
+    return false;
+  }
+}
+
+async function handle_admin_api(request, paths){
+  // paths: ["admin","api", ...]
+  const action = paths[2] || "";
+
+  if(action !== "publish"){
+    return new Response(JSON.stringify({rst:false,msg:"unknown api"}),{
+      headers:{"content-type":"application/json;charset=UTF-8"},
+      status:404
+    })
+  }
+
+  if(request.method !== "POST"){
+    return new Response(JSON.stringify({rst:false,msg:"Method Not Allowed"}),{
+      headers:{"content-type":"application/json;charset=UTF-8"},
+      status:405
+    })
+  }
+
+  if(!verifyPublishToken(request)){
+    return new Response(JSON.stringify({rst:false,msg:"Unauthorized"}),{
+      headers:{"content-type":"application/json;charset=UTF-8"},
+      status:401
+    })
+  }
+
+  // 期待 JSON body
+  // {
+  //   title, contentMD, contentHtml,
+  //   img?, link?, createDate?, category:[], tags:[],
+  //   hidden?:0|1, top_timestamp?:0, priority?, changefreq?
+  // }
+  let payload;
+  try{
+    payload = await request.json();
+  }catch(e){
+    return new Response(JSON.stringify({rst:false,msg:"Invalid JSON"}),{
+      headers:{"content-type":"application/json;charset=UTF-8"},
+      status:400
+    })
+  }
+
+  const title = (payload.title || "").trim();
+  const contentMD = (payload.contentMD || "").trim();
+  const contentHtml = (payload.contentHtml || "").trim();
+  const img = (payload.img || "").trim();
+  const link = (payload.link || "").trim();
+  const category = Array.isArray(payload.category) ? payload.category : (payload.category ? [payload.category] : []);
+  const tags = Array.isArray(payload.tags) ? payload.tags : (payload.tags ? [payload.tags] : []);
+
+  // 默认：用北京时间（与现有后台逻辑一致：+8h）
+  const nowBJ = new Date(Date.now()+8*60*60*1000);
+  const createDate = (payload.createDate || nowBJ.toISOString().slice(0,16).replace('T',' '));
+
+  const hidden = (payload.hidden === 1 || payload.hidden === "1") ? 1 : 0;
+  const top_timestamp = (payload.top_timestamp ? (payload.top_timestamp*1) : 0);
+  const priority = (payload.priority !== undefined ? String(payload.priority) : "0.5");
+  const changefreq = (payload.changefreq !== undefined ? String(payload.changefreq) : "daily");
+  const modify_timestamp = new Date().getTime()+8*60*60*1000;
+
+  if(!title || !contentMD || !contentHtml || category.length === 0){
+    return new Response(JSON.stringify({rst:false,msg:"missing fields"}),{
+      headers:{"content-type":"application/json;charset=UTF-8"},
+      status:400
+    })
+  }
+
+  // 生成新 id
+  const id = await generateId();
+  const contentText = contentHtml.replace(/<\/?[^>]*>/g,"").trim().substring(0,OPT.readMoreLength);
+
+  const article = {
+    id,
+    title,
+    img,
+    link,
+    createDate,
+    category,
+    tags,
+    contentMD,
+    contentHtml,
+    contentText,
+    priority,
+    top_timestamp,
+    modify_timestamp,
+    hidden,
+    changefreq
+  };
+
+  // 写入 KV
+  await saveArticle(id, JSON.stringify(article));
+
+  // 写入文章索引（不含 html/md）
+  const articleWithoutHtml = {
+    id,
+    title,
+    img,
+    link,
+    createDate,
+    category,
+    tags,
+    contentText,
+    priority,
+    top_timestamp,
+    modify_timestamp,
+    hidden,
+    changefreq
+  };
+
+  const articles_all_old = await getAllArticlesList();
+  let articles_all = [];
+  articles_all.push(articleWithoutHtml);
+  articles_all = articles_all.concat(articles_all_old || []);
+  articles_all = sortArticle(articles_all);
+  await saveArticlesList(JSON.stringify(articles_all));
+
+  // 自动刷新 tags 并 purge
+  let allTags=[];
+  for(let i=0;i<articles_all.length;i++){
+    if(Array.isArray(articles_all[i].tags)){
+      for(let j=0;j<articles_all[i].tags.length;j++){
+        const t = articles_all[i].tags[j];
+        if(t && t.length>0 && allTags.indexOf(t)===-1) allTags.push(t);
+      }
+    }
+  }
+  await saveWidgetTags(JSON.stringify(allTags));
+
+  const purged = await purge();
+
+  return new Response(JSON.stringify({rst:true,msg:"published",id, purged}),{
+    headers:{"content-type":"application/json;charset=UTF-8"},
+    status:200
+  })
+}
+
+
 //访问管理后台或私密博客，则进行Base Auth
 function parseBasicAuth(request){
     const auth=request.headers.get("Authorization");
@@ -987,7 +1150,7 @@ function parseBasicAuth(request){
         if(token){
             //获取url请求对象
             let url=new URL(request.url)
-            let paths=url.pathname.trim("/").split("/")
+            let paths=url.pathname.split("/").filter(Boolean)
 
             //校验权限
             if("admin"==paths[0] && ("search.xml"==paths[1]||"sitemap.xml"==paths[1])){
@@ -996,9 +1159,16 @@ function parseBasicAuth(request){
         }
         return false;
     }
-    const[user,pwd]=atob(auth.split(" ").pop()).split(":");
-    console.log("-----parseBasicAuth----- ", user, pwd)
-    return user===ACCOUNT.user && pwd===ACCOUNT.password
+    const decoded = atob(auth.split(" ").pop());
+    const idx = decoded.indexOf(":");
+    const user = idx === -1 ? decoded : decoded.slice(0, idx);
+    const pwd  = idx === -1 ? "" : decoded.slice(idx+1);
+    console.log("-----parseBasicAuth----- ", user)
+
+    // 支持使用 Workers Secrets 覆盖（避免密码写死在代码仓库里）
+    const expectedUser = (typeof ADMIN_USER !== "undefined" && ADMIN_USER !== null && ADMIN_USER !== "") ? ADMIN_USER : ACCOUNT.user;
+    const expectedPwd  = (typeof ADMIN_PASSWORD !== "undefined" && ADMIN_PASSWORD !== null && ADMIN_PASSWORD !== "") ? ADMIN_PASSWORD : ACCOUNT.password;
+    return user===expectedUser && pwd===expectedPwd
 }
 
 //获取所有【公开】文章：仅前台使用
