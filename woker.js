@@ -1,8 +1,8 @@
 /**
- * CHANGELOG (auto-maintained)
- * - 2026-03-22 14:59 UTC: Fix sidebar "近期文章" layout override specificity (JustNews widget_post_thumb); add !important to override theme floats/margins.
- * - 2026-03-22 14:55 UTC: Remove duplicate jQuery injection to avoid breaking theme JS (lazyload/fixed sidebar).
- * - 2026-03-22 14:40 UTC: Add cyber dark UI CSS pack; add publish-token admin APIs (/admin/api/update, /admin/api/delete); add default cover + img fallback.
+ * 更新记录（自动维护，北京时间 UTC+8）
+ * - 2026-03-22 22:59: 修复侧栏「近期文章」样式覆盖优先级（JustNews 的 widget_post_thumb），使用 !important 强制覆盖主题 float/margin。
+ * - 2026-03-22 22:55: 移除重复注入的旧版 jQuery，避免破坏主题 JS（懒加载/侧栏固定）。
+ * - 2026-03-22 22:40: 注入深色赛博 UI；新增发布 Token 管理接口（/admin/api/update、/admin/api/delete）；增加默认封面 defaultCover + img 兜底。
  */
 
 /**------【①.谋而后定：配置区】-----**/
