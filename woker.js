@@ -1,3 +1,10 @@
+/**
+ * CHANGELOG (auto-maintained)
+ * - 2026-03-22 14:59 UTC: Fix sidebar "近期文章" layout override specificity (JustNews widget_post_thumb); add !important to override theme floats/margins.
+ * - 2026-03-22 14:55 UTC: Remove duplicate jQuery injection to avoid breaking theme JS (lazyload/fixed sidebar).
+ * - 2026-03-22 14:40 UTC: Add cyber dark UI CSS pack; add publish-token admin APIs (/admin/api/update, /admin/api/delete); add default cover + img fallback.
+ */
+
 /**------【①.谋而后定：配置区】-----**/
 
 'use strict';
@@ -89,16 +96,20 @@ const OPT = { //网站配置
   /* images (fix layout) */
   img{max-width:100%; height:auto; border-radius:14px;}
 
-  /* Recently widget fixes (JustNews) */
-  .widget_post_thumb ul{margin:0; padding:0; list-style:none;}
-  .widget_post_thumb .item{display:flex; gap:12px; align-items:flex-start; padding:10px 0;}
-  .widget_post_thumb .item-img{width:120px; flex:0 0 120px;}
-  .widget_post_thumb .item-img-inner{display:block; width:120px; height:72px; overflow:hidden; border-radius:12px; border:1px solid var(--line); background:rgba(0,0,0,.25);}
-  .widget_post_thumb .item-img-inner img{width:100%; height:100%; object-fit:cover; display:block; border-radius:12px;}
-  .widget_post_thumb .item-content{flex:1 1 auto; min-width:0;}
-  .widget_post_thumb .item-title a{color:var(--text) !important; text-decoration:none;}
+  /* Recently widget fixes (JustNews)
+   * NOTE: JustNews main.css uses floats + margin-left.
+   * We force a flex layout and override with !important to win specificity.
+   */
+  .widget_post_thumb ul{margin:0 !important; padding:0 !important; list-style:none !important;}
+  .widget_post_thumb ul .item{display:flex !important; gap:12px !important; align-items:flex-start !important; padding:10px 0 !important; overflow:visible !important;}
+  .widget_post_thumb .item-img{float:none !important; width:120px !important; flex:0 0 120px !important; overflow:visible !important; border-radius:12px !important;}
+  .widget_post_thumb .item-img-inner{display:block !important; width:120px !important; height:72px !important; overflow:hidden !important; border-radius:12px !important; border:1px solid var(--line) !important; background:rgba(0,0,0,.25) !important;}
+  .widget_post_thumb .item-img img{width:100% !important; height:100% !important; object-fit:cover !important; display:block !important; border-radius:12px !important; vertical-align:top !important;}
+  .widget_post_thumb .item-content{margin-left:0 !important; flex:1 1 auto !important; min-width:0 !important;}
+  .widget_post_thumb .item-title{height:auto !important; margin-bottom:6px !important;}
+  .widget_post_thumb .item-title a{color:var(--text) !important; text-decoration:none !important;}
   .widget_post_thumb .item-title a:hover{color:var(--good) !important;}
-  .widget_post_thumb .item-date{color:var(--muted) !important; margin-top:6px;}
+  .widget_post_thumb .item-date{color:var(--muted) !important; margin-top:6px !important;}
 
   /* video embed */
   .oc-video{position:relative; padding-top:56.25%; border-radius:14px; overflow:hidden; border:1px solid var(--line); background:rgba(0,0,0,.35); box-shadow:var(--shadow);}
