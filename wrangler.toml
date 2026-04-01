@@ -1,3 +1,7 @@
-name = "blog2026"          # 这里换成你 Cloudflare 里 Worker 的脚本名
-main = "woker.js"             # 入口文件名（你仓库现在是 woker.js）
+name = "blog2026"
+main = "woker.js"
 compatibility_date = "2026-04-01"
+
+routes = [
+  { pattern = "blog.201310.xyz", zone_name = "201310.xyz", custom_domain = true }
+]
