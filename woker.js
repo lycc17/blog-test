@@ -6,12 +6,16 @@
  * - 2026-03-22 23:19: 新增 cacheKeyVersion（缓存Key版本）并写入 Workers Cache Key，避免部署后仍命中旧边缘缓存。
  * - 2026-03-22 22:59: 修复侧栏「近期文章」样式覆盖优先级（JustNews 的 widget_post_thumb），使用 !important 强制覆盖主题 float/margin。
  * - 2026-03-22 22:55: 移除重复注入的旧版 jQuery，避免破坏主题 JS（懒加载/侧栏固定）。
+ * - 2026-04-01 12:29: 修复 Mustache 未加载导致全站 1101（Mustache is not defined）；通过 importScripts 引入 mustache.min.js。
  * - 2026-03-22 22:40: 注入深色赛博 UI；新增发布 Token 管理接口（/admin/api/update、/admin/api/delete）；增加默认封面 defaultCover + img 兜底。
  */
 
 /**------【①.谋而后定：配置区】-----**/
 
 'use strict';
+
+// Load Mustache template engine (required for Mustache.render in worker runtime)
+importScripts("https://cdn.jsdelivr.net/npm/mustache@4.2.0/mustache.min.js");
 
 // =============================
 // 全局缓存版本号（KV）
