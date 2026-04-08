@@ -937,7 +937,7 @@ async function handle_admin(request){
   if("saveAddNew"==paths[1]){
     const ret=await parseReq(request);
     let title=ret.title,//文章标题
-        img=ret.img || `https://source.unsplash.com/featured/1200x630?abstract,technology,dark&sig=${id || Date.now()}`,//插图
+        img=ret.img || `https://picsum.photos/seed/${id || Date.now()}/1200/630`,//插图
         link=ret.link,//永久链接
         createDate=ret.createDate.replace('T',' '),//发布日期
         category=ret.category,//分类
@@ -1047,7 +1047,7 @@ async function handle_admin(request){
   if("saveEdit"==paths[1]){
     const ret=await parseReq(request);
     let title=ret.title,//文章标题
-        img=ret.img || `https://source.unsplash.com/featured/1200x630?abstract,technology,dark&sig=${id || Date.now()}`,//插图
+        img=ret.img || `https://picsum.photos/seed/${id || Date.now()}/1200/630`,//插图
         link=ret.link,//永久链接
         createDate=ret.createDate.replace('T',' '),//发布日期
         category=ret.category,//分类
@@ -1256,7 +1256,7 @@ async function api_publish(payload){
   const contentMD = (payload.contentMD || "").trim();
   const contentHtml = (payload.contentHtml || "").trim();
   // img 可选；为空则用默认封面兜底，避免列表/侧栏破图
-  let img = ((payload.img || "").trim()); if(!img) { img = `https://source.unsplash.com/featured/1200x630?abstract,technology,dark&sig=${Date.now()}`; }
+  let img = ((payload.img || "").trim()); if(!img) { img = `https://picsum.photos/seed/${Date.now()}/1200/630`; }
   const link = (payload.link || "").trim();
   const category = normArr(payload.category);
   const tags = normArr(payload.tags);
