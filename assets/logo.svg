@@ -6,7 +6,8 @@
       <stop offset="0.55" stop-color="#00E5FF"/>
       <stop offset="1" stop-color="#29F5A6"/>
     </linearGradient>
-    <filter id="glow" x="-50%" y="-80%" width="200%" height="260%">
+
+    <filter id="glow" x="-60%" y="-90%" width="220%" height="280%">
       <feGaussianBlur stdDeviation="2.8" result="b"/>
       <feColorMatrix in="b" type="matrix" values="
         1 0 0 0 0
@@ -18,19 +19,41 @@
         <feMergeNode in="SourceGraphic"/>
       </feMerge>
     </filter>
+
     <filter id="shadow" x="-40%" y="-50%" width="180%" height="220%">
       <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.35"/>
     </filter>
+
+    <!-- Candy stripes clip -->
+    <clipPath id="candyClip">
+      <circle cx="18" cy="18" r="10.2"/>
+    </clipPath>
   </defs>
 
-  <!-- icon: candy neon ring (more legible at small sizes) -->
+  <!-- icon: circular candy (clearer at small sizes) -->
   <g transform="translate(2,6)" filter="url(#shadow)">
+    <!-- chip background -->
     <rect x="0" y="0" width="36" height="36" rx="12" fill="#070A12"/>
-    <rect x="0" y="0" width="36" height="36" rx="12" fill="url(#neon)" opacity="0.14"/>
-    <circle cx="18" cy="18" r="10" fill="none" stroke="url(#neon)" stroke-width="3.2" filter="url(#glow)"/>
-    <circle cx="18" cy="18" r="4.2" fill="#00E5FF" opacity="0.9" filter="url(#glow)"/>
-    <path d="M10 18h4" stroke="#29F5A6" stroke-width="2.4" stroke-linecap="round" opacity="0.75"/>
-    <path d="M22 18h4" stroke="#7C4DFF" stroke-width="2.4" stroke-linecap="round" opacity="0.75"/>
+    <rect x="0" y="0" width="36" height="36" rx="12" fill="url(#neon)" opacity="0.12"/>
+
+    <!-- candy disc -->
+    <circle cx="18" cy="18" r="10.8" fill="#070A12" opacity="0.7"/>
+    <circle cx="18" cy="18" r="10.2" fill="url(#neon)" opacity="0.95" filter="url(#glow)"/>
+
+    <!-- diagonal stripes (clipped to disc) -->
+    <g clip-path="url(#candyClip)" opacity="0.48">
+      <rect x="-2" y="8" width="44" height="3" rx="1.5" fill="#070A12" transform="rotate(-25 18 18)"/>
+      <rect x="-2" y="15" width="44" height="3" rx="1.5" fill="#070A12" transform="rotate(-25 18 18)"/>
+      <rect x="-2" y="22" width="44" height="3" rx="1.5" fill="#070A12" transform="rotate(-25 18 18)"/>
+      <rect x="-2" y="29" width="44" height="3" rx="1.5" fill="#070A12" transform="rotate(-25 18 18)"/>
+    </g>
+
+    <!-- outline ring -->
+    <circle cx="18" cy="18" r="10.2" fill="none" stroke="#D7E1FF" stroke-opacity="0.18" stroke-width="1.4"/>
+
+    <!-- gloss highlight -->
+    <ellipse cx="14.6" cy="14.1" rx="5.8" ry="3.8" fill="#FFFFFF" opacity="0.18"/>
+    <circle cx="25.8" cy="24.8" r="1.8" fill="#00E5FF" opacity="0.9" filter="url(#glow)"/>
   </g>
 
   <!-- wordmark -->
