@@ -78,6 +78,16 @@ const ACCOUNT = { //账号相关，安全性更高
   "kv_var": this['CFBLOG'],//workers绑定kv时用的变量名
 }
 
+// small stable hash for cache keys (non-crypto)
+function fnv1a32(str){
+  let h = 0x811c9dc5;
+  for(let i=0;i<str.length;i++){
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  return (h >>> 0);
+}
+
 const OPT = { //网站配置
 
   /*--前台参数--*/
@@ -416,8 +426,11 @@ async function handlerRequest(event){
   const cacheUrl = "https://" + OPT.siteDomain + url.pathname + (allow.toString() ? ("?" + allow.toString()) : "");
   const cacheKey = new Request(cacheUrl, { method: "GET" });
 
+  // DEBUG: allow bypassing caches.default for homepage diagnostics
+  const debugNoCache = allow.get("nocache") === "1";
+
   let k;
-  if (!OPT.privateBlog && request.method === "GET" && head !== "admin") {
+  if (!debugNoCache && !OPT.privateBlog && request.method === "GET" && head !== "admin") {
     console.log("cacheKey:", cacheUrl);
     k = await cache.match(cacheKey);
     if (k) {
@@ -474,10 +487,19 @@ async function handlerRequest(event){
 
       // 私密博客建议不使用 public 缓存
       k.headers.set("Cache-Control", (OPT.privateBlog ? "private" : "public") + ", max-age=" + browserMaxAge)
-      if (!OPT.privateBlog && request.method === "GET") {
+      if (!debugNoCache && !OPT.privateBlog && request.method === "GET") {
         event.waitUntil(cache.put(cacheKey, k.clone()))
       }
     }
+  }catch(e){}
+
+  // DEBUG headers (helps diagnose why some clients still see old homepage)
+  try{
+    k.headers.set("X-TT-CacheUrl", cacheUrl);
+    k.headers.set("X-TT-NoCache", debugNoCache ? "1" : "0");
+    // fingerprint the injected head snippet so we can tell which version rendered the HTML
+    k.headers.set("X-TT-HeadHash", String(fnv1a32(String(OPT.codeBeforHead||""))));
+    k.headers.set("X-TT-SiteName", String(OPT.siteName||""));
   }catch(e){}
 
   return k
