@@ -135,14 +135,21 @@ const OPT = { //网站配置
     font-family: var(--nav-font) !important;
     font-weight: var(--nav-weight) !important;
     letter-spacing: .06em;
-    font-size: 16px;
+    font-size: 19px; /* +~20% */
   }
   /* Login button on the right: 登录 */
   .navbar-action .login{
     font-family: var(--nav-font) !important;
     font-weight: var(--nav-weight) !important;
     letter-spacing: .08em;
-    font-size: 15px;
+    font-size: 18px; /* +~20% */
+  }
+
+  /* Logo clarity */
+  .logo img{
+    height: 42px;
+    width: auto;
+    filter: drop-shadow(0 6px 18px rgba(0,0,0,.35));
   }
 
   /* theme variables */
@@ -1572,6 +1579,7 @@ async function getThemeHtml(template_path){
           font-weight:800;
           letter-spacing:.06em;
           padding:12px 16px;
+          font-size: 17px; /* +~20% */
         }
         .nav-tabs>li>a:hover{background:rgba(0,229,255,.06); color:var(--text); border-color:rgba(0,229,255,.16);} 
         .nav-tabs>li.active>a,
@@ -1586,6 +1594,7 @@ async function getThemeHtml(template_path){
         #myTab > li:first-child > a{
           font-family:var(--nav-font);
           letter-spacing:.12em;
+          font-size:18px; /* +~20% */
         }
 
         /* cards */
