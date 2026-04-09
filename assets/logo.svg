@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="240" height="48" viewBox="0 0 240 48" role="img" aria-label="糖果的博客 cyber logo">
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="72" viewBox="0 0 360 72" role="img" aria-label="糖果的博客 cyber logo">
   <defs>
     <linearGradient id="neon" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#B388FF"/>
@@ -8,7 +8,7 @@
     </linearGradient>
 
     <filter id="glow" x="-60%" y="-90%" width="220%" height="280%">
-      <feGaussianBlur stdDeviation="2.8" result="b"/>
+      <feGaussianBlur stdDeviation="4.2" result="b"/>
       <feColorMatrix in="b" type="matrix" values="
         1 0 0 0 0
         0 1 0 0 0
@@ -21,7 +21,7 @@
     </filter>
 
     <filter id="shadow" x="-40%" y="-50%" width="180%" height="220%">
-      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.35"/>
+      <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#000" flood-opacity="0.35"/>
     </filter>
 
     <!-- Candy stripes clip -->
@@ -30,49 +30,52 @@
     </clipPath>
   </defs>
 
-  <!-- icon: circular candy (clearer at small sizes) -->
-  <g transform="translate(2,6)" filter="url(#shadow)">
-    <!-- chip background -->
-    <rect x="0" y="0" width="36" height="36" rx="12" fill="#070A12"/>
-    <rect x="0" y="0" width="36" height="36" rx="12" fill="url(#neon)" opacity="0.14"/>
+  <!-- Scaled Group -->
+  <g transform="scale(1.5)">
+    <!-- icon: circular candy (clearer at small sizes) -->
+    <g transform="translate(2,6)" filter="url(#shadow)">
+      <!-- chip background -->
+      <rect x="0" y="0" width="36" height="36" rx="12" fill="#070A12"/>
+      <rect x="0" y="0" width="36" height="36" rx="12" fill="url(#neon)" opacity="0.14"/>
 
-    <!-- candy disc (more colorful) -->
-    <circle cx="18" cy="18" r="10.8" fill="#0B1020" opacity="0.85"/>
-    <circle cx="18" cy="18" r="10.2" fill="url(#neon)" opacity="0.98" filter="url(#glow)"/>
+      <!-- candy disc (more colorful) -->
+      <circle cx="18" cy="18" r="10.8" fill="#0B1020" opacity="0.85"/>
+      <circle cx="18" cy="18" r="10.2" fill="url(#neon)" opacity="0.98" filter="url(#glow)"/>
 
-    <!-- diagonal stripes (clipped to disc): colorful candy stripes -->
-    <g clip-path="url(#candyClip)" opacity="0.92">
-      <rect x="-2" y="9" width="44" height="3.2" rx="1.6" fill="#FFFFFF" opacity="0.22" transform="rotate(-25 18 18)"/>
-      <rect x="-2" y="16" width="44" height="3.2" rx="1.6" fill="#00E5FF" opacity="0.22" transform="rotate(-25 18 18)"/>
-      <rect x="-2" y="23" width="44" height="3.2" rx="1.6" fill="#7C4DFF" opacity="0.20" transform="rotate(-25 18 18)"/>
-      <rect x="-2" y="30" width="44" height="3.2" rx="1.6" fill="#29F5A6" opacity="0.18" transform="rotate(-25 18 18)"/>
+      <!-- diagonal stripes (clipped to disc): colorful candy stripes -->
+      <g clip-path="url(#candyClip)" opacity="0.92">
+        <rect x="-2" y="9" width="44" height="3.2" rx="1.6" fill="#FFFFFF" opacity="0.22" transform="rotate(-25 18 18)"/>
+        <rect x="-2" y="16" width="44" height="3.2" rx="1.6" fill="#00E5FF" opacity="0.22" transform="rotate(-25 18 18)"/>
+        <rect x="-2" y="23" width="44" height="3.2" rx="1.6" fill="#7C4DFF" opacity="0.20" transform="rotate(-25 18 18)"/>
+        <rect x="-2" y="30" width="44" height="3.2" rx="1.6" fill="#29F5A6" opacity="0.18" transform="rotate(-25 18 18)"/>
+      </g>
+
+      <!-- outline ring -->
+      <circle cx="18" cy="18" r="10.2" fill="none" stroke="#D7E1FF" stroke-opacity="0.22" stroke-width="1.4"/>
+
+      <!-- gloss highlight -->
+      <ellipse cx="14.6" cy="14.1" rx="6.0" ry="3.9" fill="#FFFFFF" opacity="0.22"/>
+      <circle cx="25.8" cy="24.8" r="1.9" fill="#00E5FF" opacity="0.95" filter="url(#glow)"/>
     </g>
 
-    <!-- outline ring -->
-    <circle cx="18" cy="18" r="10.2" fill="none" stroke="#D7E1FF" stroke-opacity="0.22" stroke-width="1.4"/>
+    <!-- wordmark -->
+    <g transform="translate(46, 0)" filter="url(#shadow)">
+      <!-- subtle glitch layers -->
+      <text x="0" y="30" font-size="20" font-weight="800"
+        font-family="'LXGW WenKai','Noto Serif SC','Source Han Serif SC','PingFang SC','Hiragino Sans GB','Microsoft YaHei',serif"
+        fill="#00E5FF" opacity="0.20" letter-spacing="1.1" transform="translate(-1,0)" filter="url(#glow)">糖果的博客</text>
+      <text x="0" y="30" font-size="20" font-weight="800"
+        font-family="'LXGW WenKai','Noto Serif SC','Source Han Serif SC','PingFang SC','Hiragino Sans GB','Microsoft YaHei',serif"
+        fill="#7C4DFF" opacity="0.16" letter-spacing="1.1" transform="translate(1,0.6)" filter="url(#glow)">糖果的博客</text>
 
-    <!-- gloss highlight -->
-    <ellipse cx="14.6" cy="14.1" rx="6.0" ry="3.9" fill="#FFFFFF" opacity="0.22"/>
-    <circle cx="25.8" cy="24.8" r="1.9" fill="#00E5FF" opacity="0.95" filter="url(#glow)"/>
-  </g>
+      <!-- main neon text -->
+      <text x="0" y="30" font-size="20" font-weight="800"
+        font-family="'LXGW WenKai','Noto Serif SC','Source Han Serif SC','PingFang SC','Hiragino Sans GB','Microsoft YaHei',serif"
+        fill="url(#neon)" opacity="0.98" letter-spacing="1.1" filter="url(#glow)">糖果的博客</text>
 
-  <!-- wordmark -->
-  <g transform="translate(46, 0)" filter="url(#shadow)">
-    <!-- subtle glitch layers -->
-    <text x="0" y="30" font-size="20" font-weight="800"
-      font-family="'LXGW WenKai','Noto Serif SC','Source Han Serif SC','PingFang SC','Hiragino Sans GB','Microsoft YaHei',serif"
-      fill="#00E5FF" opacity="0.20" letter-spacing="1.1" transform="translate(-1,0)" filter="url(#glow)">糖果的博客</text>
-    <text x="0" y="30" font-size="20" font-weight="800"
-      font-family="'LXGW WenKai','Noto Serif SC','Source Han Serif SC','PingFang SC','Hiragino Sans GB','Microsoft YaHei',serif"
-      fill="#7C4DFF" opacity="0.16" letter-spacing="1.1" transform="translate(1,0.6)" filter="url(#glow)">糖果的博客</text>
-
-    <!-- main neon text -->
-    <text x="0" y="30" font-size="20" font-weight="800"
-      font-family="'LXGW WenKai','Noto Serif SC','Source Han Serif SC','PingFang SC','Hiragino Sans GB','Microsoft YaHei',serif"
-      fill="url(#neon)" opacity="0.98" letter-spacing="1.1" filter="url(#glow)">糖果的博客</text>
-
-    <!-- scanline underline -->
-    <rect x="0" y="36" width="150" height="2" rx="1" fill="#00E5FF" opacity="0.15"/>
-    <rect x="0" y="36" width="150" height="2" rx="1" fill="url(#neon)" opacity="0.32" filter="url(#glow)"/>
+      <!-- scanline underline -->
+      <rect x="0" y="36" width="150" height="2" rx="1" fill="#00E5FF" opacity="0.15"/>
+      <rect x="0" y="36" width="150" height="2" rx="1" fill="url(#neon)" opacity="0.32" filter="url(#glow)"/>
+    </g>
   </g>
 </svg>
