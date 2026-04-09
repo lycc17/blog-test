@@ -157,14 +157,21 @@ const OPT = { //网站配置
     font-size: 18px; /* keep */
   }
 
-  /* Logo clarity (make logo bigger; keep nav text size) */
-  .logo img{
-    height: 64px;
-    width: auto;
-    filter: drop-shadow(0 6px 18px rgba(0,0,0,.40)) saturate(1.15);
+  /* Logo clarity (theme has max-height:32px; override it) */
+  body>header.header .logo img{
+    width:auto;
+    height:auto;
+    max-height: 44px; /* slightly larger than nav text */
+    vertical-align: middle;
+    filter: drop-shadow(0 6px 18px rgba(0,0,0,.40)) saturate(1.18);
   }
   @media (max-width: 768px){
-    .logo img{height: 54px;}
+    body>header.header .logo img{max-height: 38px;}
+  }
+  /* keep logo container tall enough */
+  body>header.header .logo{height:72px;}
+  @media (max-width: 768px){
+    body>header.header .logo{height:58px;}
   }
 
   /* theme variables */
