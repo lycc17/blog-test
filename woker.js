@@ -117,7 +117,7 @@ const OPT = { //网站配置
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=LXGW+WenKai:wght@400;700&display=swap" rel="stylesheet">
   <!-- Favicon / Tab icon (icon only; no wordmark) -->
-  <link rel="icon" href="https://cdn.jsdelivr.net/gh/lycc17/blog0309@main/assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="https://cdn.jsdelivr.net/gh/lycc17/blog0309@main/assets/favicon.svg?v=2026-04-09-02" type="image/svg+xml">
   <!-- Fallbacks for some browsers/platforms (served by handle_favicon) -->
   <link rel="alternate icon" href="/favicon.ico" type="image/x-icon">
   <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
@@ -526,7 +526,7 @@ async function handle_favicon(request){
   // 说明：某些浏览器/平台仍会强制请求 /favicon.ico，这里返回 SVG 也能正常显示。
   try{
     // Use icon-only favicon (no wordmark) for tab icon
-    const svgUrl = `https://cdn.jsdelivr.net/gh/lycc17/blog0309@main/assets/favicon.svg`;
+    const svgUrl = `https://cdn.jsdelivr.net/gh/lycc17/blog0309@main/assets/favicon.svg?v=2026-04-09-02`;
     const res = await fetch(svgUrl, {cf:{cacheTtl: 3600}});
     const svg = await res.text();
     return new Response(svg, {
@@ -1586,7 +1586,7 @@ async function getThemeHtml(template_path){
       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
       <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&family=LXGW+WenKai:wght@400;700&display=swap" rel="stylesheet">
       <!-- Favicon for admin pages (override theme default cloud icon) -->
-      <link rel="icon" href="https://cdn.jsdelivr.net/gh/lycc17/blog0309@main/assets/favicon.svg" type="image/svg+xml">
+      <link rel="icon" href="https://cdn.jsdelivr.net/gh/lycc17/blog0309@main/assets/favicon.svg?v=2026-04-09-02" type="image/svg+xml">
       <link rel="alternate icon" href="/favicon.ico" type="image/x-icon">
       <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
       <style id="tt-admin-ui">
