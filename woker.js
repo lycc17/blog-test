@@ -428,22 +428,33 @@ async function handlerRequest(event){
   const allow = new URLSearchParams();
   if (sp.has("theme")) allow.set("theme", sp.get("theme"));
   if (sp.has("pageSize")) allow.set("pageSize", sp.get("pageSize"));
+  // DEBUG: allow bypassing caches.default via ?nocache=1
+  if (sp.has("nocache")) allow.set("nocache", sp.get("nocache"));
+
   // include cacheKeyVersion to bust edge cache after deployments
   const v = (OPT.cacheKeyVersion ? String(OPT.cacheKeyVersion) : "");
   if(v) allow.set("v", v);
 
-  // include global KV cache buster so homepage/list pages refresh across all edge locations
+  // IMPORTANT: always include cb (even if empty) to avoid 2 cache-key families
+  // (with-cb vs without-cb) which can cause "sometimes old sometimes new" HTML.
   const cb = await getCacheBuster();
-  if(cb) allow.set("cb", cb);
+  allow.set("cb", cb || "0");
 
   const cacheUrl = "https://" + OPT.siteDomain + url.pathname + (allow.toString() ? ("?" + allow.toString()) : "");
   const cacheKey = new Request(cacheUrl, { method: "GET" });
 
-  // DEBUG: allow bypassing caches.default for homepage diagnostics
-  const debugNoCache = allow.get("nocache") === "1";
+  const debugNoCache = sp.get("nocache") === "1";
+  const canUseWorkersCache = (!debugNoCache
+    && !OPT.privateBlog
+    && request.method === "GET"
+    && head !== "admin"
+    && head !== "favicon.ico"
+    && head !== "robots.txt"
+    && head !== "sitemap.xml"
+    && head !== "search.xml");
 
   let k;
-  if (!debugNoCache && !OPT.privateBlog && request.method === "GET" && head !== "admin") {
+  if (canUseWorkersCache) {
     console.log("cacheKey:", cacheUrl);
     k = await cache.match(cacheKey);
     if (k) {
@@ -491,6 +502,8 @@ async function handlerRequest(event){
   try{
     if(head === "admin"){
       k.headers.set("Cache-Control","no-store")
+    }else if(head === "favicon.ico"){
+      // keep handle_favicon() Cache-Control; do NOT override or cache in caches.default
     }else{
       // 对首页/列表页降低浏览器缓存，避免 UI 调整后用户仍看到旧 HTML（title/logo/css 注入）
       // - 缓存仍由 Workers Cache API 兜底（cacheKeyVersion + KV cache buster）
@@ -500,7 +513,7 @@ async function handlerRequest(event){
 
       // 私密博客建议不使用 public 缓存
       k.headers.set("Cache-Control", (OPT.privateBlog ? "private" : "public") + ", max-age=" + browserMaxAge)
-      if (!debugNoCache && !OPT.privateBlog && request.method === "GET") {
+      if (canUseWorkersCache) {
         event.waitUntil(cache.put(cacheKey, k.clone()))
       }
     }
