@@ -1580,6 +1580,12 @@ async function getThemeHtml(template_path){
   // 目标：不改上游主题源码，只在 Worker 层做 head 注入。
   // 注意：后台页面本身引用 Bootstrap 3 与 editor.md，这里仅做样式覆盖。
   if (template_path.startsWith("admin/")) {
+    // Remove upstream theme favicons (some browsers may prefer the first/ICO one)
+    // We will inject our own favicon links at the end of <head>.
+    try{
+      html = html.replace(/<link[^>]+rel=["'](?:shortcut\s+icon|icon)["'][^>]*>/gi, "");
+    }catch(e){}
+
     const adminHead = `
       <!-- TangTang Admin Cyber UI (injected) -->
       <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1587,7 +1593,8 @@ async function getThemeHtml(template_path){
       <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&family=LXGW+WenKai:wght@400;700&display=swap" rel="stylesheet">
       <!-- Favicon for admin pages (override theme default cloud icon) -->
       <link rel="icon" href="https://cdn.jsdelivr.net/gh/lycc17/blog0309@main/assets/favicon.svg?v=2026-04-09-02" type="image/svg+xml">
-      <link rel="alternate icon" href="/favicon.ico" type="image/x-icon">
+      <!-- extra fallbacks: some browsers still prefer ICO type -->
+      <link rel="icon" href="/favicon.ico" type="image/x-icon">
       <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
       <style id="tt-admin-ui">
         :root{
@@ -1733,6 +1740,14 @@ async function getThemeHtml(template_path){
   }
   if (template_path === "admin/edit") {
     html = html.replace("编辑文章 - CF-blog后台", "编辑文章 - 糖果的博客");
+  }
+
+  // After we modify HTML, inject our favicon links just before </head> to win precedence.
+  if (template_path.startsWith("admin/") && html.includes("</head>")) {
+    html = html.replace(
+      "</head>",
+      `\n<!-- TangTang favicon (force override) -->\n<link rel="icon" href="https://cdn.jsdelivr.net/gh/lycc17/blog0309@main/assets/favicon.svg?v=2026-04-09-02" type="image/svg+xml">\n<link rel="icon" href="/favicon.ico" type="image/x-icon">\n<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">\n</head>`
+    );
   }
 
   return html
