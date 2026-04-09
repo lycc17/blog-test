@@ -2,10 +2,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-label="糖果的博客 favicon">
   <defs>
     <linearGradient id="neon" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#7C4DFF"/>
-      <stop offset="0.55" stop-color="#00E5FF"/>
-      <stop offset="1" stop-color="#29F5A6"/>
+      <stop offset="0" stop-color="#B388FF"/>
+      <stop offset="0.50" stop-color="#00F5FF"/>
+      <stop offset="1" stop-color="#35FFB3"/>
     </linearGradient>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="2" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
     <clipPath id="candyClip">
       <circle cx="32" cy="32" r="16"/>
     </clipPath>
@@ -13,21 +20,21 @@
 
   <!-- background chip -->
   <rect x="8" y="8" width="48" height="48" rx="18" fill="#070A12"/>
-  <rect x="8" y="8" width="48" height="48" rx="18" fill="url(#neon)" opacity="0.12"/>
+  <rect x="8" y="8" width="48" height="48" rx="18" fill="url(#neon)" opacity="0.18"/>
 
   <!-- candy disc -->
-  <circle cx="32" cy="32" r="17" fill="#070A12" opacity="0.55"/>
-  <circle cx="32" cy="32" r="16" fill="url(#neon)" opacity="0.95"/>
+  <circle cx="32" cy="32" r="17" fill="#0B1020" opacity="0.75"/>
+  <circle cx="32" cy="32" r="16" fill="url(#neon)" opacity="0.98" filter="url(#glow)"/>
 
-  <!-- diagonal stripes -->
-  <g clip-path="url(#candyClip)" opacity="0.50">
-    <rect x="-10" y="18" width="120" height="5" rx="2.5" fill="#070A12" transform="rotate(-25 32 32)"/>
-    <rect x="-10" y="30" width="120" height="5" rx="2.5" fill="#070A12" transform="rotate(-25 32 32)"/>
-    <rect x="-10" y="42" width="120" height="5" rx="2.5" fill="#070A12" transform="rotate(-25 32 32)"/>
+  <!-- colorful diagonal stripes -->
+  <g clip-path="url(#candyClip)" opacity="0.92">
+    <rect x="-10" y="17" width="120" height="5" rx="2.5" fill="#FFFFFF" opacity="0.22" transform="rotate(-25 32 32)"/>
+    <rect x="-10" y="29" width="120" height="5" rx="2.5" fill="#00F5FF" opacity="0.18" transform="rotate(-25 32 32)"/>
+    <rect x="-10" y="41" width="120" height="5" rx="2.5" fill="#B388FF" opacity="0.16" transform="rotate(-25 32 32)"/>
   </g>
 
   <!-- outline & gloss -->
-  <circle cx="32" cy="32" r="16" fill="none" stroke="#D7E1FF" stroke-opacity="0.18" stroke-width="2"/>
+  <circle cx="32" cy="32" r="16" fill="none" stroke="#D7E1FF" stroke-opacity="0.22" stroke-width="2"/>
   <ellipse cx="26" cy="26" rx="10" ry="7" fill="#FFFFFF" opacity="0.16"/>
-  <circle cx="43" cy="43" r="3" fill="#00E5FF" opacity="0.9"/>
+  <circle cx="43" cy="43" r="3" fill="#00F5FF" opacity="0.9" filter="url(#glow)"/>
 </svg>
