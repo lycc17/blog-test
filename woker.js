@@ -266,7 +266,7 @@ const OPT = { //网站配置
   "otherCodeC":``,//
   "otherCodeD":``,//
   "otherCodeE":``,//
-  "copyRight" :`Powered by <a href="https://www.cloudflare.com">Cloudflare</a> & <a href="https://blog.arrontg.cf">CFBlog-Plus</a> & <a href="https://blog.gezhong.vip">CF-Blog </a>`,//自定义版权信息,建议保留大公无私的 Coudflare 和 作者 的链接
+  "copyRight" :`Powered by <a href="https://www.cloudflare.com">Cloudflare</a> & <a href="https://github.com/lycc17/blog0309">Github</a>`,//自定义版权信息
   "robots":`User-agent: *
 Disallow: /admin`,//robots.txt设置
   
